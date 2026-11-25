@@ -104,3 +104,12 @@ antes y después. Idioma del código y de los mensajes de commit: inglés.
   `sku` y `qty`; el precio lo toma `Cart.lines` del catálogo.
 - **Diff descartado:** ninguno.
 
+## Turno 14 — línea base del carrito de la IA
+
+- **Pedido:** dejar registrado el carrito original de la IA antes de arreglarlo, con sus pruebas, replay y gate.
+- **Método tocado:** ninguno (`shop/cart_ai.py` intacto).
+- **Pruebas:** `SHOP_MODE=ai python manage.py test` → 49 pasan / 18 fallan. `audit_cart --replay` →
+  `REPLAY_MISMATCH` en 05 y 06. `gate --modo ai` → `rechazar`, código 1.
+- **Gate antes / después:** `rechazar` (1) / `rechazar` (1).
+- **Diff descartado:** ninguno.
+
