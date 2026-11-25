@@ -39,21 +39,35 @@ class Cart:
 
     # --- lines ---
     def add(self, sku, qty=1):
-        """TODO: qty is an int >= 1 (InvalidQuantity); the sku exists (UnknownProduct);
-        what is already in the cart plus qty must not exceed the stock (OutOfStock, cart unchanged)."""
-        raise NotImplementedError("TODO: add")
+        """Add qty units of a catalog product, checking quantity and stock first."""
+        if type(qty) is not int or qty < 1:
+            raise InvalidQuantity("qty must be an integer >= 1")
+        if sku not in self._catalog:
+            raise UnknownProduct(f"unknown product: {sku!r}")
+        if self._qty.get(sku, 0) + qty > self._catalog[sku].stock:
+            raise OutOfStock(f"not enough stock for {sku!r}")
+        self._qty[sku] = self._qty.get(sku, 0) + qty
 
     def remove(self, sku, qty=None):
-        """TODO: qty=None removes the whole line; otherwise subtract qty and drop the line when it
-        reaches zero. A sku that is not in the cart is UnknownProduct. Never leave a negative quantity."""
-        raise NotImplementedError("TODO: remove")
+        """Remove units from a line, dropping it at zero and never going negative."""
+        if sku not in self._qty:
+            raise UnknownProduct(f"unknown product in cart: {sku!r}")
+        if qty is not None and (type(qty) is not int or qty < 1):
+            raise InvalidQuantity("qty must be an integer >= 1")
+        if qty is None or qty >= self._qty[sku]:
+            del self._qty[sku]
+        else:
+            self._qty[sku] -= qty
 
     def qty_of(self, sku):
         return self._qty.get(sku, 0)
 
     def lines(self):
-        """TODO: one Line(sku, name, unit_price, qty) per sku, in insertion order, price from the catalog."""
-        raise NotImplementedError("TODO: lines")
+        """Build Line objects in insertion order with the price taken from the catalog."""
+        return [
+            Line(sku, self._catalog[sku].name, self._catalog[sku].price, qty)
+            for sku, qty in self._qty.items()
+        ]
 
     # --- coupon and totals ---
     def apply_coupon(self, code):
