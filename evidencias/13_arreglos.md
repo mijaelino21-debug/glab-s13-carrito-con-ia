@@ -60,3 +60,20 @@ Modo de trabajo: `$env:SHOP_MODE="ai"` en PowerShell; después de cada arreglo s
   `test_remove_more_than_there_is_leaves_no_negative_line`.
 - **Gate:** sigue en `rechazar` (1).
 - **Evidencia:** `13_fix4_test.txt`.
+
+## Arreglo 5 — descuento acumulado dos veces
+
+- **Pedido:** un solo cupón por carrito; aplicarlo otra veces (igual u otro) reemplaza.
+- **Método tocado:** `Cart.apply_coupon`.
+- **Cambio:** `self._coupons.append(code)` → `self._coupons = [code]`; el bucle de `_discount` sigue
+  intacto pero ahora solo ve un cupón. Review question #4 respondida: repetir la acción da el mismo resultado.
+- **Pruebas con `SHOP_MODE=ai`:** fallaban **3** → **0** (`Ran 67`, `OK`, código 0). Se arreglan
+  `test_the_coupon_is_applied_once_even_if_the_client_repeats_it`, `test_a_second_coupon_replaces_the_first`
+  y `test_applying_the_same_coupon_twice_discounts_once`.
+- **Gate:** se mide en el paso 16, ya con cero pruebas fallidas.
+- **Evidencia:** `13_fix5_test.txt`.
+
+## Resumen de la secuencia
+
+`18 -> 13 -> 11 -> 5 -> 3 -> 0` pruebas fallidas con `SHOP_MODE=ai`, un fallo y un commit por arreglo.
+Después se ejecuta `Remove-Item Env:SHOP_MODE`.
