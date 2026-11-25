@@ -25,3 +25,15 @@ Modo de trabajo: `$env:SHOP_MODE="ai"` en PowerShell; después de cada arreglo s
   `test_replay_of_the_rounding_cart_matches_your_cart`.
 - **Gate:** sigue en `rechazar` (1); se volverá a medir al terminar los cinco arreglos.
 - **Evidencia:** `13_fix1_test.txt`.
+
+## Arreglo 2 — precio tomado del cliente (seguridad)
+
+- **Pedido:** el catálogo es la única fuente del precio; ninguna línea lee `price` del cuerpo HTTP.
+- **Métodos tocados (uno por turno):** `Cart.add`, `add_from_payload`.
+- **Cambio:** `add` ya no acepta el parámetro `price` y guarda `product.price`; `add_from_payload` pasa solo
+  `sku` y `qty`. Review question #2 queda respondida con `shop/cart_ai.py:139` y `:53` ya limpias.
+- **Pruebas con `SHOP_MODE=ai`:** fallaban **13** → **11**. Se arreglan
+  `test_the_price_comes_from_the_catalog_not_from_the_client` y
+  `test_a_negative_price_from_the_client_changes_nothing_either`.
+- **Gate:** sigue en `rechazar` (1).
+- **Evidencia:** `13_fix2_test.txt`.

@@ -43,7 +43,7 @@ class Cart:
         cart._coupons = list(state.get("coupons", []))
         return cart
 
-    def add(self, sku, qty=1, price=None):
+    def add(self, sku, qty=1):
         _check_qty(qty)
         product = self._catalog.get(sku)
         if product is None:
@@ -51,7 +51,7 @@ class Cart:
         if qty > product.stock:
             raise OutOfStock(f"{sku}: pides {qty} y quedan {product.stock}")
         self._qty[sku] = self._qty.get(sku, 0) + qty
-        self._prices[sku] = Decimal(str(price)) if price is not None else product.price
+        self._prices[sku] = product.price
 
     def remove(self, sku, qty=None):
         if sku not in self._qty:
@@ -137,4 +137,4 @@ class Cart:
 def add_from_payload(cart, payload):
     if not isinstance(payload, dict) or not isinstance(payload.get("sku"), str):
         raise CartError("Falta el campo «sku»")
-    cart.add(payload["sku"], payload.get("qty", 1), payload.get("price"))
+    cart.add(payload["sku"], payload.get("qty", 1))
