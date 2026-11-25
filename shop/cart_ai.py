@@ -48,7 +48,7 @@ class Cart:
         product = self._catalog.get(sku)
         if product is None:
             raise UnknownProduct(f"No existe el producto {sku!r}")
-        if qty > product.stock:
+        if self._qty.get(sku, 0) + qty > product.stock:
             raise OutOfStock(f"{sku}: pides {qty} y quedan {product.stock}")
         self._qty[sku] = self._qty.get(sku, 0) + qty
         self._prices[sku] = product.price
@@ -125,6 +125,9 @@ class Cart:
     def checkout(self):
         if not self._qty:
             raise CartError("El carrito está vacío")
+        for sku, qty in self._qty.items():
+            if qty > self._catalog[sku].stock:
+                raise OutOfStock(f"{sku}: pides {qty} y quedan {self._catalog[sku].stock}")
         order = self.summary()
         for sku, qty in self._qty.items():
             self._catalog[sku].stock -= qty

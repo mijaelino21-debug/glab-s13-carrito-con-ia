@@ -37,3 +37,14 @@ Modo de trabajo: `$env:SHOP_MODE="ai"` en PowerShell; después de cada arreglo s
   `test_a_negative_price_from_the_client_changes_nothing_either`.
 - **Gate:** sigue en `rechazar` (1).
 - **Evidencia:** `13_fix2_test.txt`.
+
+## Arreglo 3 — existencias que no cuentan lo ya agregado
+
+- **Pedido:** dos `add` seguidos no pueden rebasar el stock y `checkout` debe volver a comprobar todo antes de descontar.
+- **Métodos tocados (uno por turno):** `Cart.add`, `Cart.checkout`.
+- **Cambio:** `add` compara `self._qty.get(sku, 0) + qty` contra `product.stock`; `checkout` recorre todas las
+  líneas y lanza `OutOfStock` antes de tocar cualquier existencia.
+- **Pruebas con `SHOP_MODE=ai`:** fallaban **11** → **5**. Se arreglan las cuatro de stock y
+  `test_more_than_the_stock_is_409` y el error `test_checkout_when_the_stock_changed_is_409_and_keeps_the_cart`.
+- **Gate:** sigue en `rechazar` (1).
+- **Evidencia:** `13_fix3_test.txt`.
