@@ -137,7 +137,7 @@ class Cart:
 
 
 def add_from_payload(cart, payload):
-    """TODO: translate the JSON body of POST /api/cart/items/ ({"sku": ..., "qty": ...}) into a cart.add
-    call. The body is untrusted: if it is not a dict with a string «sku», raise CartError. The price is
-    NOT part of the contract: the catalog is the only source of prices."""
-    raise NotImplementedError("TODO: add_from_payload")
+    """Validate the untrusted body and add units using only the catalog price."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("sku"), str):
+        raise CartError("body must be a dict with a string 'sku'")
+    cart.add(payload["sku"], payload.get("qty", 1))

@@ -94,3 +94,13 @@ antes y después. Idioma del código y de los mensajes de commit: inglés.
   `apply_coupon`; separarlos dejaría un commit con pruebas en rojo.
 - **Diff descartado:** ninguno.
 
+## Turno 13 — `add_from_payload`
+
+- **Pedido:** aceptar solo un dict con `sku` string; no leer `price` de la petición.
+- **Método tocado:** `add_from_payload`.
+- **Pruebas:** `shop.tests.test_api` → 14/14 OK. Regresión: `shop.tests.test_lines` → 15/15 OK.
+- **Gate antes / después:** `rechazar` (1) / se medirá en el paso 9.
+- **Pregunta de revisión aplicada:** #2 (el servidor es la única fuente del precio): la función solo pasa
+  `sku` y `qty`; el precio lo toma `Cart.lines` del catálogo.
+- **Diff descartado:** ninguno.
+
