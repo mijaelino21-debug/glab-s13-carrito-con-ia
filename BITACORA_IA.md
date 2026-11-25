@@ -53,5 +53,16 @@ antes y después. Idioma del código y de los mensajes de commit: inglés.
   `summary` (pasos 6 y 7), ninguno de líneas/cantidades.
 - **Gate antes / después:** `rechazar` (1, 43 fallidas) / `rechazar` (1, 43 fallidas, 24 pasan).
 - **Comentario:** `test_lines` no puede quedar verde todavía porque `test_state_survives_between_requests`
-  usa cupón y `summary`; se volverá a correr al terminar esos pasos.
+  usa cupón y `summary`;   se volverá a correr al terminar esos pasos.
 - **Diff descartado:** ninguno.
+
+## Turno 5 — `checkout`
+
+- **Pedido:** volver a comprobar todas las líneas antes de descontar cualquiera, bajar existencias, vaciar
+  carrito y cupón y devolver el resumen.
+- **Método tocado:** `Cart.checkout`.
+- **Pruebas:** `python manage.py test shop.tests.test_stock` → 7 de 10 pasan; los 3 errores restantes son
+  `summary` y `apply_coupon` (pasos 6 y 7), no stock ni checkout.
+- **Gate antes / después:** `rechazar` (1) / `rechazar` (1).
+- **Diff descartado:** ninguno.
+
