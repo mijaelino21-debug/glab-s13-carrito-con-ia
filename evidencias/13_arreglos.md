@@ -48,3 +48,15 @@ Modo de trabajo: `$env:SHOP_MODE="ai"` en PowerShell; después de cada arreglo s
   `test_more_than_the_stock_is_409` y el error `test_checkout_when_the_stock_changed_is_409_and_keeps_the_cart`.
 - **Gate:** sigue en `rechazar` (1).
 - **Evidencia:** `13_fix3_test.txt`.
+
+## Arreglo 4 — cantidad negativa al quitar
+
+- **Pedido:** quitar más de lo que hay debe borrar la línea y nunca dejar `-3`.
+- **Método tocado:** `Cart.remove`.
+- **Cambio:** si `qty >= self._qty[sku]` se borran la línea y su precio; si no, se resta. Ya no se compara
+  solo con `== 0`.
+- **Pruebas con `SHOP_MODE=ai`:** fallaban **5** → **3**. Se arreglan
+  `test_remove_more_than_there_is_never_leaves_a_negative_quantity` y
+  `test_remove_more_than_there_is_leaves_no_negative_line`.
+- **Gate:** sigue en `rechazar` (1).
+- **Evidencia:** `13_fix4_test.txt`.
