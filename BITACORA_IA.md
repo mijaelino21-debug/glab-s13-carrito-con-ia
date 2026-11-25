@@ -66,3 +66,31 @@ antes y después. Idioma del código y de los mensajes de commit: inglés.
 - **Gate antes / después:** `rechazar` (1) / `rechazar` (1).
 - **Diff descartado:** ninguno.
 
+## Turno 6 — decimales en el intérprete
+
+- **Pedido:** ejecutar las cuatro expresiones de decimales y guardar los resultados.
+- **Método tocado:** ninguno.
+- **Pruebas:** no aplica; salida en `evidencias/05_decimal.txt`. `0.1+0.2` da `0.30000000000000004`,
+  `Decimal` da `0.3`, `round(0.845, 2)` da `0.84` y `quantize(..., ROUND_HALF_UP)` da `0.85`.
+- **Gate antes / después:** no ejecutado / no ejecutado.
+- **Diff descartado:** ninguno.
+
+## Turnos 7-11 — `subtotal`, `discount`, `igv`, `total`, `summary`
+
+- **Pedido:** calcular todos los importes con `Decimal` y `money()`, y devolver el resumen con cadenas de dos decimales.
+- **Métodos tocados:** `Cart.subtotal`, `Cart.discount`, `Cart.igv`, `Cart.total`, `Cart.summary` (uno por turno).
+- **Pruebas:** `python manage.py test shop.tests.test_totals` → 9 errores tras `subtotal`, 4 tras los demás;
+  los 4 restantes eran de `apply_coupon`, que aún no existía. Tras implementarlo: 10/10 OK.
+- **Gate antes / después:** `rechazar` (1) / se volverá a medir al terminar el carrito completo.
+- **Diff descartado:** ninguno.
+
+## Turno 12 — `apply_coupon`
+
+- **Pedido:** un solo cupón que se reemplaza, `strip` + `upper`, desconocido → `InvalidCoupon`, fijo sin pasar del subtotal.
+- **Método tocado:** `Cart.apply_coupon` (y `Cart.discount` para el tope del cupón fijo).
+- **Pruebas:** `shop.tests.test_coupons` → 9/9 OK; regresión `test_lines + test_stock + test_totals` → 35/35 OK.
+- **Gate antes / después:** `rechazar` (1) / se medirá en el paso 9.
+- **Nota de commit:** los pasos 6 y 7 se commitean juntos porque `test_totals` no puede quedar verde sin
+  `apply_coupon`; separarlos dejaría un commit con pruebas en rojo.
+- **Diff descartado:** ninguno.
+

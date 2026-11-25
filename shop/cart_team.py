@@ -71,31 +71,54 @@ class Cart:
 
     # --- coupon and totals ---
     def apply_coupon(self, code):
-        """TODO: code without spaces and in upper case; unknown -> InvalidCoupon. One coupon per cart:
-        applying again (the same or another) REPLACES it."""
-        raise NotImplementedError("TODO: apply_coupon")
+        """Normalize and validate the code, then replace the cart's single coupon."""
+        if not isinstance(code, str):
+            raise InvalidCoupon("coupon code must be a string")
+        normalized = code.strip().upper()
+        if normalized not in COUPONS:
+            raise InvalidCoupon(f"unknown coupon: {code!r}")
+        self._coupon = normalized
 
     def subtotal(self):
-        """TODO: sum of price * qty, rounded to cents (Decimal)."""
-        raise NotImplementedError("TODO: subtotal")
+        """Sum line totals with Decimal arithmetic and round to cents."""
+        return money(sum((line.total for line in self.lines()), Decimal("0")))
 
     def discount(self):
-        """TODO: percent coupon = subtotal * pct / 100 rounded half up; fixed coupon = the amount, but
-        never more than the subtotal; no coupon = Decimal('0.00')."""
-        raise NotImplementedError("TODO: discount")
+        """Compute the single coupon's discount, capped at the subtotal for fixed coupons."""
+        if self._coupon is None:
+            return Decimal("0.00")
+        kind, amount = COUPONS[self._coupon]
+        if kind == "percent":
+            return money(self.subtotal() * amount / 100)
+        return money(min(amount, self.subtotal()))
 
     def igv(self):
-        """TODO: 18 % of (subtotal - discount), rounded half up."""
-        raise NotImplementedError("TODO: igv")
+        """Charge 18 % sales tax on the discounted base, rounded half up."""
+        return money((self.subtotal() - self.discount()) * IGV_RATE)
 
     def total(self):
-        """TODO: (subtotal - discount) + igv."""
-        raise NotImplementedError("TODO: total")
+        """Add the already rounded tax to the discounted base."""
+        return money(self.subtotal() - self.discount()) + self.igv()
 
     def summary(self):
-        """TODO: the dict the API returns. Keys: lines (list of dicts with sku, name, unit_price,
-        qty, line_total as 2-decimal strings), coupon, subtotal, discount, igv, total (strings via fmt)."""
-        raise NotImplementedError("TODO: summary")
+        """Return the API payload with money values formatted as two-decimal strings."""
+        return {
+            "lines": [
+                {
+                    "sku": line.sku,
+                    "name": line.name,
+                    "unit_price": fmt(line.unit_price),
+                    "qty": line.qty,
+                    "line_total": fmt(line.total),
+                }
+                for line in self.lines()
+            ],
+            "coupon": self._coupon,
+            "subtotal": fmt(self.subtotal()),
+            "discount": fmt(self.discount()),
+            "igv": fmt(self.igv()),
+            "total": fmt(self.total()),
+        }
 
     # --- checkout ---
     def checkout(self):
