@@ -1,0 +1,22 @@
+Diff descartado durante el arreglo 1 del carrito de la IA.
+
+Se escribió primero esta versión de `igv`/`total` y se corrigió antes de hacer el commit
+`fix: use Decimal money and half-up rounding in AI cart`. La prueba
+`TotalsTests.test_the_discount_rounds_half_up` mostró `Decimal('8.98') != Decimal('8.97')`.
+
+Pregunta de revisión aplicada: #1 (¿todo el dinero es `Decimal` de principio a fin con redondeo
+hacia arriba en la mitad?). La versión rechazada redondea dos veces una base aún sin redondear:
+para PAD-01 con BIENVENIDA10, `subtotal - descuento_sin_redondear = 8.45 - 0.845 = 7.605`, que
+`_money` lleva a 7.61; al sumar el IGV 1.37 da 8.98 en vez de 8.97.
+
+--- a/shop/cart_ai.py
++++ b/shop/cart_ai.py
+@@ -103,10 +103,10 @@
+     def igv(self):
+-        return _money((self._subtotal() - self._discount()) * IGV)
++        return _money((self.subtotal() - self.discount()) * IGV)
+ 
+     def total(self):
+-        base = _money(self._subtotal() - self._discount())
++        base = self.subtotal() - self.discount()
+         return base + self.igv()

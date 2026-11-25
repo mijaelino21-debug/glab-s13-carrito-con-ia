@@ -1,0 +1,6 @@
+
+Compuerta: tu carrito (modo team)
+  pruebas     pasan  67   fallan   0
+  carritos    6 de 6 como se esperaba
+  veredicto   ACEPTAR (c├│digo de salida 0)
+EXITCODE=0

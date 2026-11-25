@@ -113,3 +113,26 @@ antes y después. Idioma del código y de los mensajes de commit: inglés.
 - **Gate antes / después:** `rechazar` (1) / `rechazar` (1).
 - **Diff descartado:** ninguno.
 
+## Turnos 15-19 — arreglos del carrito de la IA
+
+- **Pedido:** corregir un fallo por commit en `shop/cart_ai.py` hasta cero pruebas fallidas en modo `ai`.
+- **Métodos tocados:** `IGV`/imports, `_money`, `_subtotal`, `_discount`, `igv`, `total`; `add`,
+  `add_from_payload`; `checkout`; `remove`; `apply_coupon` (uno por turno).
+- **Pruebas:** fallaban 18 → 13 → 11 → 5 → 3 → 0 con `SHOP_MODE=ai`; ver `evidencias/13_arreglos.md`.
+- **Gate antes / después:** `rechazar` (1, 18 fallidas, 4/6 carritos) / `aceptar` (0, 67 pasan, 6/6 carritos)
+  tanto para `ai` como para `team` y en `--json`.
+- **Preguntas de revisión aplicadas:** #1 al redondeo (`money()` + `ROUND_HALF_UP`), #2 al precio del cliente
+  (solo `sku`/`qty` cruzan la frontera), #3 a la secuencia de `add`/`remove`/`checkout` y #4 al cupón reemplazado.
+- **Diff descartado:** sí. La primera versión del arreglo del redondeo usaba `base = _money(subtotal -
+  descuento_sin_redondear)` en `total`, que daba 8.98 en vez de 8.97; la pregunta #1 y la prueba
+  `test_the_discount_rounds_half_up` lo rechazaron. Guardado en `evidencias/17_diff_rechazado.patch`.
+  No hubo otros rechazos.
+
+## Turno 20 — cierre
+
+- **Pedido:** llenar la tabla de uso de IA, correr la prueba completa y la compuerta, y hacer push a `main`.
+- **Método tocado:** ninguno.
+- **Pruebas:** `python manage.py test` → 67/67 OK; `gate` → `aceptar`, código 0.
+- **Gate antes / después:** `aceptar` (0) / `aceptar` (0).
+- **Diff descartado:** ninguno adicional.
+
